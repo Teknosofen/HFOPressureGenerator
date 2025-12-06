@@ -61,7 +61,13 @@ private:
     int oldValue;
     int oldAdcCounts;
     
-    // Enhanced cache for dual motor
+    // Enhanced cache for dual motor - ESC
+    String oldESCMode;
+    String oldESCDir;
+    int oldESCThrottle;
+    int oldESCADC;
+    
+    // Enhanced cache for dual motor - Stepper
     long oldStepperPos;
     long oldStepperTarget;
     float oldStepperSpeed;

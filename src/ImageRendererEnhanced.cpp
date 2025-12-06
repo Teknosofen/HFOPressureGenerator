@@ -3,6 +3,8 @@
 ImageRendererEnhanced::ImageRendererEnhanced() 
     : oldValue(-1), 
       oldAdcCounts(-1),
+      oldESCThrottle(-1),
+      oldESCADC(-1),
       oldStepperPos(-1),
       oldStepperTarget(-1),
       oldStepperSpeed(-1.0),
@@ -96,30 +98,125 @@ void ImageRendererEnhanced::drawFullUI(const char* modeText, const char* dirText
 
 void ImageRendererEnhanced::drawESCStatus(int x, int y, const char* mode, const char* dir, 
                                          int throttle, int adc) {
-    tft.setTextColor(TFT_DEEPBLUE, TFT_LOGOBACKGROUND);
-    tft.setCursor(x, y);
-    tft.println("=== ESC Motor ===");
-    tft.setCursor(x, y + 20);
-    tft.printf("Mode: %s", mode);
-    tft.setCursor(x, y + 40);
-    tft.printf("Throttle: %d", throttle);
-    tft.setCursor(x, y + 60);
-    tft.printf("Dir: %s", dir);
+    // Mode
+    if (oldESCMode != mode) {
+        // Erase old
+        tft.setTextColor(TFT_LOGOBACKGROUND, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 20);
+        tft.printf("Mode: %s", oldESCMode.c_str());
+        
+        // Draw new
+        oldESCMode = mode;
+        tft.setTextColor(TFT_DEEPBLUE, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 20);
+        tft.printf("Mode: %s", mode);
+    }
+    
+    // Throttle
+    if (throttle != oldESCThrottle) {
+        // Erase old
+        tft.setTextColor(TFT_LOGOBACKGROUND, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 40);
+        tft.printf("Throttle: %d", oldESCThrottle);
+        
+        // Draw new
+        oldESCThrottle = throttle;
+        tft.setTextColor(TFT_DEEPBLUE, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 40);
+        tft.printf("Throttle: %d", throttle);
+    }
+    
+    // Direction
+    if (oldESCDir != dir) {
+        // Erase old
+        tft.setTextColor(TFT_LOGOBACKGROUND, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 60);
+        tft.printf("Dir: %s", oldESCDir.c_str());
+        
+        // Draw new
+        oldESCDir = dir;
+        tft.setTextColor(TFT_DEEPBLUE, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 60);
+        tft.printf("Dir: %s", dir);
+    }
+    
+    // Draw header once (doesn't change)
+    static bool headerDrawn = false;
+    if (!headerDrawn) {
+        tft.setTextColor(TFT_DEEPBLUE, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y);
+        tft.println("=== ESC Motor ===");
+        headerDrawn = true;
+    }
 }
 
 void ImageRendererEnhanced::drawStepperStatus(int x, int y, long pos, long target, 
                                               float speed, bool running, bool enabled) {
-    tft.setTextColor(TFT_GREENISH_TINT, TFT_LOGOBACKGROUND);
-    tft.setCursor(x, y);
-    tft.println("=== Stepper ===");
-    tft.setCursor(x, y + 20);
-    tft.printf("Pos: %ld/%ld", pos, target);
-    tft.setCursor(x, y + 40);
-    tft.printf("Speed: %.0f RPM", speed);
-    tft.setCursor(x, y + 60);
-    tft.printf("%s", running ? "MOVING" : "IDLE");
-    tft.setCursor(x, y + 80);
-    tft.printf("%s", enabled ? "ON" : "OFF");
+    // Position
+    if (pos != oldStepperPos || target != oldStepperTarget) {
+        // Erase old
+        tft.setTextColor(TFT_LOGOBACKGROUND, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 20);
+        tft.printf("Pos: %ld/%ld    ", oldStepperPos, oldStepperTarget);
+        
+        // Draw new
+        oldStepperPos = pos;
+        oldStepperTarget = target;
+        tft.setTextColor(TFT_GREENISH_TINT, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 20);
+        tft.printf("Pos: %ld/%ld", pos, target);
+    }
+    
+    // Speed
+    if (speed != oldStepperSpeed) {
+        // Erase old
+        tft.setTextColor(TFT_LOGOBACKGROUND, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 40);
+        tft.printf("Speed: %.0f RPM   ", oldStepperSpeed);
+        
+        // Draw new
+        oldStepperSpeed = speed;
+        tft.setTextColor(TFT_GREENISH_TINT, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 40);
+        tft.printf("Speed: %.0f RPM", speed);
+    }
+    
+    // Running status
+    if (running != oldStepperRunning) {
+        // Erase old
+        tft.setTextColor(TFT_LOGOBACKGROUND, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 60);
+        tft.printf("%s      ", oldStepperRunning ? "MOVING" : "IDLE");
+        
+        // Draw new
+        oldStepperRunning = running;
+        tft.setTextColor(TFT_GREENISH_TINT, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 60);
+        tft.printf("%s", running ? "MOVING" : "IDLE");
+    }
+    
+    // Enabled status
+    if (enabled != oldStepperEnabled) {
+        // Erase old
+        tft.setTextColor(TFT_LOGOBACKGROUND, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 80);
+        tft.printf("%s   ", oldStepperEnabled ? "ON" : "OFF");
+        
+        // Draw new
+        oldStepperEnabled = enabled;
+        tft.setTextColor(TFT_GREENISH_TINT, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y + 80);
+        tft.printf("%s", enabled ? "ON" : "OFF");
+    }
+    
+    // Draw header once (doesn't change)
+    static bool headerDrawn = false;
+    if (!headerDrawn) {
+        tft.setTextColor(TFT_GREENISH_TINT, TFT_LOGOBACKGROUND);
+        tft.setCursor(x, y);
+        tft.println("=== Stepper ===");
+        headerDrawn = true;
+    }
 }
 
 void ImageRendererEnhanced::drawDualMotorUI(const char* escMode, const char* escDir, 

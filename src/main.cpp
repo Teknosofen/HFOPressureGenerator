@@ -18,7 +18,7 @@
 #define INTERACTION_BUTTON_PIN 14   // GPIO14, Key 2: toggle PWM/DSHOT
 #define DIRECTION_BUTTON_PIN   0    // GPIO0, Key 1: toggle forward/reverse
 #define ADC_INPUT_PIN          1    // GPIO1, ADC1_CH1 for ESC throttle
-const int ESC_PIN = 43;             // ESC signal pin (white wire)
+const int ESC_PIN = 44;             // ESC signal pin (white wire)
 
 // Stepper Motor (DRV8871)
 const int STEPPER_IN1_PIN = 10;     // DRV8871 IN1
@@ -86,11 +86,11 @@ void setup() {
     pinMode(STEPPER_ENABLE_BUTTON, INPUT_PULLUP);
     
     // Initial display
-    display.drawFullUI(escMotor.getModeString(), 
-                       escMotor.getDirectionString(),
-                       escMotor.getThrottleLabel(), 
-                       1000, 
-                       0);
+    // display.drawFullUI(escMotor.getModeString(), 
+                    //    escMotor.getDirectionString(),
+                    //    escMotor.getThrottleLabel(), 
+                    //    1000, 
+                    //    0);
     
     Serial.println("=== Dual Motor Controller ===");
     Serial.println("ESC Motor (Brushless) + Stepper Motor");
