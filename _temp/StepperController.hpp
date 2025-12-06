@@ -1,5 +1,5 @@
-#ifndef STEPPER_CONTROLLER_HPP
-#define STEPPER_CONTROLLER_HPP
+#ifndef STEPPER_CONTROLLER_H
+#define STEPPER_CONTROLLER_H
 
 #include <Arduino.h>
 
@@ -103,4 +103,4 @@ private:
     void applyHalfStep(uint8_t phase);
 };
 
-#endif // STEPPER_CONTROLLER_HPP
+#endif // STEPPER_CONTROLLER_H
